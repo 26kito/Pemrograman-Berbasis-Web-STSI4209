@@ -103,3 +103,23 @@ body#login-page {
   margin-top: 20px;
 }
 /* Dashboard */
+
+/* Stok Bahan Ajar */
+.card-bahan {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+.card-bahan:hover {
+  transform: scale(1.03);
+}
+.card-bahan img {
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+.stok-badge {
+  font-size: 0.9rem;
+}
+/* Stok Bahan Ajar */

@@ -69,3 +69,29 @@ function cariTracking() {
 
     hasilDiv.innerHTML = html;
 }
+
+function tampilkanStok() {
+    const container = document.getElementById("daftarBahanAjar");
+    container.innerHTML = "";
+
+    dataBahanAjar.forEach((item) => {
+        const col = document.createElement("div");
+        col.className = "col-md-4 col-lg-3";
+
+        col.innerHTML = `
+            <div class="card card-bahan">
+              <img src="${item.cover}" class="card-img-top" alt="${item.namaBarang}">
+              <div class="card-body">
+                <h6 class="card-title">${item.namaBarang}</h6>
+                <p class="mb-1"><strong>Kode Barang:</strong> ${item.kodeBarang}</p>
+                <p class="mb-1"><strong>Lokasi:</strong> ${item.kodeLokasi}</p>
+                <p class="mb-1"><strong>Jenis:</strong> ${item.jenisBarang}</p>
+                <p class="mb-1"><strong>Edisi:</strong> ${item.edisi}</p>
+                <span class="badge bg-success stok-badge">Stok: ${item.stok}</span>
+              </div>
+            </div>
+          `;
+
+        container.appendChild(col);
+    });
+}

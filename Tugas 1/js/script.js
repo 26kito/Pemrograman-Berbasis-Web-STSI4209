@@ -8,8 +8,9 @@ $('.btn-login').on('click', function (e) {
     const user = dataPengguna.find(u => u.email === email && u.password === password);
 
     if (user) {
-        sessionStorage.setItem("isLoggedIn", "true"); // simpan session
-        window.location.href = "dashboard.html"; // arahkan ke halaman lain
+        sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("username", user.nama);
+        window.location.href = "dashboard.html";
     } else {
         alert('Email atau password salah!');
     }
@@ -94,4 +95,24 @@ function tampilkanStok() {
 
         container.appendChild(col);
     });
+}
+
+function updateGreeting() {
+    const greetingEl = document.getElementById("greeting");
+    const username = sessionStorage.getItem("username") || "User";
+    const now = new Date();
+    const hour = now.getHours();
+    let greeting = "";
+
+    if (hour >= 4 && hour < 10) {
+        greeting = "Selamat pagi";
+    } else if (hour >= 10 && hour < 15) {
+        greeting = "Selamat siang";
+    } else if (hour >= 15 && hour < 18) {
+        greeting = "Selamat sore";
+    } else {
+        greeting = "Selamat malam";
+    }
+
+    greetingEl.textContent = `${greeting}, ${username}!`;
 }

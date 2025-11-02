@@ -16,19 +16,19 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
 
-  <body onload="checkLogin(); updateGreeting();">
+  <body onload="checkLogin()">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-custom">
       <div class="container-fluid">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" href="#">Home</a>
+            <a class="nav-link" href="dashboard.html">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="stok.html">Informasi Bahan Ajar</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="tracking.html">Tracking Pengiriman</a>
+            <a class="nav-link active" href="#">Tracking Pengiriman</a>
           </li>
           <li class="nav-item dropdown">
             <a
@@ -59,8 +59,22 @@
 
     <!-- Konten -->
     <div class="container mt-4">
-      <h5>Dashboard Aplikasi SITTA</h5>
-      <p><strong id="greeting">Selamat datang!</strong></p>
+      <!-- Form Tracking -->
+      <div class="tracking-card mt-4">
+        <h6 class="mb-3">🔍 Tracking Pengiriman Bahan Ajar</h6>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            id="inputNomorDO"
+            class="form-control"
+            placeholder="Masukkan Nomor DO (contoh: 2023001234)"
+          />
+          <button class="btn btn-primary" onclick="cariTracking()">Cari</button>
+        </div>
+
+        <!-- Hasil pencarian -->
+        <div id="hasilTracking" class="tracking-result"></div>
+      </div>
     </div>
   </body>
 

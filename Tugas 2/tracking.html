@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracking DO - UT</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@2.7.14/dist/vue.js"></script>
+  </head>
+
+  <body>
+    <div id="app" class="container py-4">
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-success">🚚 Tracking DO (Delivery Order)</h2>
+        <p class="text-muted">Universitas Terbuka</p>
+        <a href="index.html" class="btn btn-outline-secondary btn-sm"
+          >⬅ Kembali ke Beranda</a
+        >
+      </div>
+
+      <!-- Input Tracking -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <label for="kodeDO" class="form-label fw-semibold"
+            >Masukkan Nomor DO:</label
+          >
+          <input
+            type="text"
+            id="kodeDO"
+            v-model="kodeDO"
+            placeholder="contoh: DO2025-0001"
+            class="form-control mb-3"
+          />
+          <button class="btn btn-success w-100" @click="cekTracking">
+            Lacak Pengiriman
+          </button>
+        </div>
+      </div>
+
+      <!-- Hasil Tracking -->
+      <div v-if="hasilTracking" class="card border-success shadow-sm">
+        <div class="card-header bg-success text-white fw-semibold">
+          Data Pengiriman
+        </div>
+        <div class="card-body">
+          <p><strong>No. DO:</strong> {{ kodeDO }}</p>
+          <p><strong>Nama:</strong> {{ hasilTracking.nama }}</p>
+          <p><strong>NIM:</strong> {{ hasilTracking.nim }}</p>
+          <p>
+            <strong>Status:</strong>
+            <span class="badge bg-info">{{ hasilTracking.status }}</span>
+          </p>
+          <p><strong>Ekspedisi:</strong> {{ hasilTracking.ekspedisi }}</p>
+          <p>
+            <strong>Tanggal Kirim:</strong> {{ hasilTracking.tanggalKirim }}
+          </p>
+          <p><strong>Paket:</strong> {{ hasilTracking.paket }}</p>
+          <p>
+            <strong>Total:</strong> Rp {{
+            hasilTracking.total.toLocaleString('id-ID') }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Riwayat Perjalanan -->
+      <div
+        v-if="hasilTracking && hasilTracking.perjalanan.length > 0"
+        class="card mt-3"
+      >
+        <div class="card-header bg-primary text-white fw-semibold">
+          Riwayat Perjalanan
+        </div>
+        <ul class="list-group list-group-flush">
+          <li
+            v-for="(log, index) in hasilTracking.perjalanan"
+            :key="index"
+            class="list-group-item"
+          >
+            <strong>{{ log.waktu }}</strong> — {{ log.keterangan }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Jika Tidak Ditemukan -->
+      <div
+        v-else-if="pencarianDilakukan && !hasilTracking"
+        class="alert alert-danger mt-4 text-center"
+      >
+        Nomor DO <strong>{{ kodeDO }}</strong> tidak ditemukan.
+      </div>
+
+      <!-- Footer -->
+      <footer class="text-center mt-5">
+        <p class="small text-secondary">
+          &copy; 2025 Universitas Terbuka - Vue.js Tugas 2
+        </p>
+      </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Vue Data & App -->
+    <script src="js/dataBahanAjar.js"></script>
+    <script src="js/tracking-app.js"></script>
+  </body>
+</html>

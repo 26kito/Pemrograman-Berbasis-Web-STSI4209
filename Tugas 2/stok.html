@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stok Bahan Ajar - Universitas Terbuka</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Vue.js -->
+    <script src="https://unpkg.com/vue@2.7.14/dist/vue.js"></script>
+  </head>
+
+  <body>
+    <div id="app" class="container py-4">
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">📚 Stok Bahan Ajar</h2>
+        <p class="text-muted">Universitas Terbuka</p>
+        <a href="index.html" class="btn btn-outline-secondary btn-sm mb-3"
+          >⬅ Kembali ke Beranda</a
+        >
+      </div>
+
+      <!-- Filter Section -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body row gy-2">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Filter UT-Daerah:</label>
+            <select v-model="filterUpbjj" class="form-select">
+              <option value="">Semua</option>
+              <option v-for="u in upbjjList" :key="u">{{ u }}</option>
+            </select>
+          </div>
+          <div class="col-md-4" v-if="filterUpbjj">
+            <label class="form-label fw-semibold">Filter Kategori:</label>
+            <select v-model="filterKategori" class="form-select">
+              <option value="">Semua</option>
+              <option v-for="k in kategoriList" :key="k">{{ k }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Urutkan Berdasarkan:</label>
+            <select v-model="sortBy" class="form-select">
+              <option value="judul">Judul</option>
+              <option value="qty">Stok</option>
+              <option value="harga">Harga</option>
+            </select>
+          </div>
+          <div class="col-md-6 d-flex align-items-center">
+            <div class="form-check me-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="showMenipis"
+                id="chkMenipis"
+              />
+              <label for="chkMenipis" class="form-check-label"
+                >Tampilkan stok menipis (qty &lt; safety)</label
+              >
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="showKosong"
+                id="chkKosong"
+              />
+              <label for="chkKosong" class="form-check-label"
+                >Tampilkan stok kosong (qty = 0)</label
+              >
+            </div>
+          </div>
+          <div class="col-md-3 text-end">
+            <button class="btn btn-primary w-100" @click="resetFilter">
+              Reset Filter
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabel Stok -->
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered align-middle">
+          <thead class="table-primary text-center">
+            <tr>
+              <th>Kode / Nama Mata Kuliah</th>
+              <th>Kategori</th>
+              <th>UT-Daerah</th>
+              <th>Lokasi Rak</th>
+              <th>Qty</th>
+              <th>Safety</th>
+              <th>Status</th>
+              <th>Harga</th>
+              <th>Catatan</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(item, index) in sortedStok"
+              :key="item.kode"
+              :class="{'table-danger': item.qty === 0, 'table-warning': item.qty < item.safety && item.qty > 0}"
+            >
+              <td>
+                <div v-if="editIndex !== index">
+                  <strong>{{ item.kode }}</strong><br />{{ item.judul }}
+                </div>
+                <div v-else>
+                  <input
+                    v-model="editItem.judul"
+                    class="form-control form-control-sm mb-1"
+                  />
+                </div>
+              </td>
+              <td>{{ item.kategori }}</td>
+              <td>{{ item.upbjj }}</td>
+              <td>{{ item.lokasiRak }}</td>
+              <td>
+                <span v-if="editIndex !== index">{{ item.qty }}</span>
+                <input
+                  v-else
+                  v-model.number="editItem.qty"
+                  type="number"
+                  class="form-control form-control-sm"
+                />
+              </td>
+              <td>{{ item.safety }}</td>
+              <td>
+                <span v-if="item.qty === 0" class="text-danger fw-semibold"
+                  >❌ Kosong</span
+                >
+                <span
+                  v-else-if="item.qty < item.safety"
+                  class="text-warning fw-semibold"
+                  >⚠️ Menipis</span
+                >
+                <span v-else class="text-success fw-semibold">✅ Aman</span>
+              </td>
+              <td>Rp {{ item.harga.toLocaleString('id-ID') }}</td>
+              <td v-html="item.catatanHTML"></td>
+              <td>
+                <button
+                  v-if="editIndex !== index"
+                  class="btn btn-sm btn-outline-primary"
+                  @click="startEdit(index)"
+                >
+                  Edit
+                </button>
+                <button
+                  v-else
+                  class="btn btn-sm btn-success me-1"
+                  @click="saveEdit(index)"
+                >
+                  Simpan
+                </button>
+                <button
+                  v-if="editIndex === index"
+                  class="btn btn-sm btn-secondary"
+                  @click="cancelEdit"
+                >
+                  Batal
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Form Tambah Data Baru -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h5 class="fw-semibold text-primary mb-3">Tambah Bahan Ajar Baru</h5>
+          <div class="row gy-2">
+            <div class="col-md-4">
+              <input
+                v-model="newItem.kode"
+                placeholder="Kode"
+                class="form-control"
+              />
+            </div>
+            <div class="col-md-4">
+              <input
+                v-model="newItem.judul"
+                placeholder="Nama Mata Kuliah"
+                class="form-control"
+              />
+            </div>
+            <div class="col-md-4">
+              <select v-model="newItem.kategori" class="form-select">
+                <option value="">Kategori</option>
+                <option v-for="k in kategoriList" :key="k">{{ k }}</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select v-model="newItem.upbjj" class="form-select">
+                <option value="">UT-Daerah</option>
+                <option v-for="u in upbjjList" :key="u">{{ u }}</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <input
+                v-model="newItem.lokasiRak"
+                placeholder="Lokasi Rak"
+                class="form-control"
+              />
+            </div>
+            <div class="col-md-2">
+              <input
+                v-model.number="newItem.qty"
+                type="number"
+                placeholder="Qty"
+                class="form-control"
+              />
+            </div>
+            <div class="col-md-2">
+              <input
+                v-model.number="newItem.safety"
+                type="number"
+                placeholder="Safety"
+                class="form-control"
+              />
+            </div>
+            <div class="col-md-4">
+              <input
+                v-model.number="newItem.harga"
+                type="number"
+                placeholder="Harga"
+                class="form-control"
+              />
+            </div>
+            <div class="col-md-8">
+              <input
+                v-model="newItem.catatanHTML"
+                placeholder="Catatan (HTML diperbolehkan)"
+                class="form-control"
+              />
+            </div>
+            <div class="col-12 text-end">
+              <button class="btn btn-success" @click="tambahItem">
+                Tambah
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="text-center mt-4">
+        <p class="small text-secondary">
+          &copy; 2025 Universitas Terbuka - Vue.js Tugas 2
+        </p>
+      </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Vue Data & Logic -->
+    <script src="js/dataBahanAjar.js"></script>
+    <script src="js/stok-app.js"></script>
+  </body>
+</html>

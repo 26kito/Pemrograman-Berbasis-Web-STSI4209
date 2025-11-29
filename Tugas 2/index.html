@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beranda - Pemesanan Bahan Ajar UT</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Vue.js -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+  <div id="app" class="container py-5">
+    <!-- Header -->
+    <header class="text-center mb-5">
+      <h1 class="fw-bold text-primary">{{ title }}</h1>
+      <p class="lead text-secondary">{{ subtitle }}</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="text-center mb-4">
+      <a href="stok.html" class="btn btn-outline-primary mx-2">📦 Stok Bahan Ajar</a>
+      <a href="tracking.html" class="btn btn-outline-success mx-2">🚚 Tracking DO</a>
+    </nav>
+
+    <!-- Conditional Display -->
+    <div class="text-center">
+      <p v-if="showInfo" class="alert alert-info d-inline-block">
+        {{ infoText }}
+      </p>
+      <p v-else class="text-muted fst-italic">Klik tombol di bawah untuk melihat informasi.</p>
+    </div>
+
+    <div class="text-center mt-3">
+      <button class="btn btn-primary" @click="toggleInfo">
+        {{ showInfo ? 'Sembunyikan Info' : 'Tampilkan Info' }}
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center mt-5">
+      <p class="small text-secondary">&copy; 2025 Universitas Terbuka - Pemesanan Bahan Ajar</p>
+    </footer>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Vue App -->
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          title: 'Sistem Pemesanan Bahan Ajar UT',
+          subtitle: 'Aplikasi sederhana menggunakan Vue.js dan Bootstrap',
+          showInfo: false,
+          infoText: 'Aplikasi ini digunakan untuk mengelola stok dan pelacakan distribusi bahan ajar Universitas Terbuka.'
+        }
+      },
+      methods: {
+        toggleInfo() {
+          this.showInfo = !this.showInfo;
+        }
+      },
+      watch: {
+        showInfo(newVal) {
+          console.log('Status tampilan info berubah:', newVal);
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
